@@ -28,8 +28,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.generated.TunerConstants;
-
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.EndEffector;
+import frc.robot.subsystems.Elevator.ElevatorState;
+import frc.robot.subsystems.EndEffector.EndEffectorState;
 
 
 public class RobotContainer {
@@ -54,6 +58,9 @@ public class RobotContainer {
     private final CommandJoystick kGuitar = new CommandJoystick(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final Elevator elevator = new Elevator();
+    public final EndEffector endEffector = new EndEffector();
+    public final Climb climb = new Climb();
 
     public RobotContainer() {
         
@@ -79,10 +86,28 @@ public class RobotContainer {
         
 
         //bind controller buttons
-
+        /*
+         * A: stow elevator (intake, L1)
+         * B: elevator l2
+         * X: elevator l3
+         * Y: elevator l4
+         * Right Trigger: Intake
+         * Left Trigger: Score
+         * Left Bumper: move algae arm up
+         * Right Bumper: move algae arm down
+         */
+        kController.a().onTrue(elevator.setState(ElevatorState.STOW));
+        kController.b().onTrue(elevator.setState(ElevatorState.L2));
+        kController.x().onTrue(elevator.setState(ElevatorState.L3));
+        kController.y().onTrue(elevator.setState(ElevatorState.L4));
+        kController.rightTrigger().onTrue(endEffector.setState(EndEffectorState.INTAKING));
+        kController.leftTrigger().onTrue(endEffector.setState(EndEffectorState.OUTTAKING));
+        kController.leftBumper().whileTrue(endEffector.moveAlgaeUp());
+        kController.rightBumper().whileTrue(endEffector.moveAlgaeDown());
 
         //bind guitar buttons
-      
+        kGuitar.button(OperatorConstants.kGreen).whileTrue(climb.climbUp());
+        kGuitar.button(OperatorConstants.kRed).whileTrue(climb.climbDown());
 
         
 

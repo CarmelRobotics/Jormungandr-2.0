@@ -46,7 +46,7 @@ public class EndEffector extends SubsystemBase{
         INTAKING(LEDState.RED, 10),
         HOLDING(LEDState.FLASHGREEN,0),
         OUTTAKING(LEDState.SCORE, -10),
-        NEUTRAL(LEDState.RED,10);
+        NEUTRAL(LEDState.RED,0);
         public LEDState state;
         public double voltage;
         private EndEffectorState(LEDState state, double voltage){
@@ -69,6 +69,9 @@ public class EndEffector extends SubsystemBase{
         // if beam break sensor is triggered and trying to intake, set the state to the holding state
         if(beamBreak.get() && this.currentEndEffectorState == EndEffectorState.INTAKING){
             setStateInternal(EndEffectorState.HOLDING);
+        }
+        if(this.currentEndEffectorState == EndEffectorState.OUTTAKING && !beamBreak.get()){
+            setStateInternal(EndEffectorState.NEUTRAL);
         }
         //animate leds based off current state
         this.led.animate(this.currentEndEffectorState.state.leds);
