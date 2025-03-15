@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -17,9 +18,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -56,7 +59,7 @@ public class RobotContainer {
 
     private final CommandXboxController kController = new CommandXboxController(0);
     private final CommandJoystick kGuitar = new CommandJoystick(1);
-
+    private final SendableChooser<Command> autoChooser;
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final Elevator elevator = new Elevator();
     public final EndEffector endEffector = new EndEffector();
@@ -68,7 +71,16 @@ public class RobotContainer {
         // CommandXboxController(OperatorConstants.kDriverControllerPort);
 
         configureBindings();
+        NamedCommands.registerCommand("Place",new ParallelDeadlineGroup(new WaitCommand(.25), endEffector.setState(EndEffectorState.OUTTAKING)));
+        NamedCommands.registerCommand("Extend", new ParallelDeadlineGroup(new WaitCommand(1),elevator.setState(ElevatorState.L4)));
+        NamedCommands.registerCommand("Retract", new ParallelDeadlineGroup(new WaitCommand(1),elevator.setState(ElevatorState.STOW)));
+        NamedCommands.registerCommand("Intake", new ParallelDeadlineGroup(new WaitCommand(.35), endEffector.setState(EndEffectorState.INTAKING)));
+        autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser.addOption("4 Coral", AutoBuilder.buildAuto("4coral"));
+        autoChooser.addOption("1 Coral Center", AutoBuilder.buildAuto("1coralCenter"));
+    
     }
+
 
     
     private void configureBindings() {
@@ -116,7 +128,7 @@ public class RobotContainer {
     
 
     public Command getAutonomousCommand() {
-        return null;
+        return autoChooser.getSelected();
             
 
         // return
