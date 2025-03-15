@@ -71,10 +71,12 @@ public class RobotContainer {
         // CommandXboxController(OperatorConstants.kDriverControllerPort);
 
         configureBindings();
+        //Named commands are commands we can use in pathplanner autos
         NamedCommands.registerCommand("Place",new ParallelDeadlineGroup(new WaitCommand(.25), endEffector.setState(EndEffectorState.OUTTAKING)));
         NamedCommands.registerCommand("Extend", new ParallelDeadlineGroup(new WaitCommand(1),elevator.setState(ElevatorState.L4)));
         NamedCommands.registerCommand("Retract", new ParallelDeadlineGroup(new WaitCommand(1),elevator.setState(ElevatorState.STOW)));
         NamedCommands.registerCommand("Intake", new ParallelDeadlineGroup(new WaitCommand(.35), endEffector.setState(EndEffectorState.INTAKING)));
+        //creates a chooser on our network tables so we can choose our desired auto on elastic
         autoChooser = AutoBuilder.buildAutoChooser();
         autoChooser.addOption("4 Coral", AutoBuilder.buildAuto("4coral"));
         autoChooser.addOption("1 Coral Center", AutoBuilder.buildAuto("1coralCenter"));
