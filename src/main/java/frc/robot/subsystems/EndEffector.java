@@ -32,11 +32,11 @@ public class EndEffector extends SubsystemBase{
         CANdleConfiguration config = new CANdleConfiguration();
         config.stripType = LEDStripType.RGB; // set the strip type to RGB
         led.configAllSettings(config);
-        StrobeAnimation strobe = new StrobeAnimation(0, 255, 0);
+        strobe = new StrobeAnimation(0, 255, 0);
         RainbowAnimation rainbow = new RainbowAnimation(1,.5,IntakeConstants.kLEDCount);
         led.animate(rainbow);
-        ColorFlowAnimation flow = new ColorFlowAnimation(0, 255, 0);
-        ColorFlowAnimation red = new ColorFlowAnimation(255, 0, 0, 0, 1, IntakeConstants.kLEDCount,ColorFlowAnimation.Direction.Forward );
+        flow = new ColorFlowAnimation(0, 255, 0);
+        red = new ColorFlowAnimation(255, 0, 0, 0, 1, IntakeConstants.kLEDCount,ColorFlowAnimation.Direction.Forward );
 
       
 
